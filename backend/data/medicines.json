@@ -1,0 +1,10 @@
+[
+  { "name": "Paracetamol 500mg", "dosage": "1 tablet twice a day" },
+  { "name": "Ibuprofen 400mg", "dosage": "1 tablet every 8 hours" },
+  { "name": "Amoxicillin 500mg", "dosage": "1 capsule three times a day" },
+  { "name": "Cetirizine 10mg", "dosage": "1 tablet daily" },
+  { "name": "Vitamin C 500mg", "dosage": "1 tablet daily" },
+  { "name": "Azithromycin 250mg", "dosage": "2 tablets on day 1, then 1 tablet daily for 4 days" },
+  { "name": "Metformin 500mg", "dosage": "1 tablet twice a day after meals" },
+  { "name": "Omeprazole 20mg", "dosage": "1 capsule daily before breakfast" }
+]

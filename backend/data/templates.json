@@ -1,0 +1,36 @@
+[
+  {
+    "condition": "fever",
+    "medicines": [
+      { "name": "Paracetamol 500mg", "dosage": "1 tablet every 6 hours as needed" },
+      { "name": "Vitamin C 500mg", "dosage": "1 tablet daily" }
+    ],
+    "instructions": "Drink plenty of fluids, rest, and monitor temperature.",
+    "notes": "Return if fever persists more than 3 days."
+  },
+  {
+    "condition": "cold",
+    "medicines": [
+      { "name": "Cetirizine 10mg", "dosage": "1 tablet daily" },
+      { "name": "Paracetamol 500mg", "dosage": "1 tablet every 6 hours if needed" }
+    ],
+    "instructions": "Stay hydrated, use saline nasal drops, and rest.",
+    "notes": "Monitor symptoms; see a doctor if cough worsens."
+  },
+  {
+    "condition": "diabetes",
+    "medicines": [
+      { "name": "Metformin 500mg", "dosage": "1 tablet twice a day after meals" }
+    ],
+    "instructions": "Maintain diet, exercise regularly, monitor blood sugar.",
+    "notes": "Check HbA1c every 3 months."
+  },
+  {
+    "condition": "acid reflux",
+    "medicines": [
+      { "name": "Omeprazole 20mg", "dosage": "1 capsule daily before breakfast" }
+    ],
+    "instructions": "Avoid spicy/fatty foods, elevate head during sleep.",
+    "notes": "Monitor symptoms; consult if persistent heartburn."
+  }
+]
