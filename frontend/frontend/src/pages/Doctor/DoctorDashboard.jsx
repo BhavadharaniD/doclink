@@ -133,94 +133,96 @@ const DoctorDashboard = () => {
   }
 
   return (
-  <div className="p-6 space-y-8 flex bg-gray-50 min-h-screen">
-    <Sidebar />
-    <div className="flex-1 space-y-8">
-      {/* Top Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
-          <h3 className="text-lg font-semibold text-gray-700">🗓️ Today's Appointments</h3>
-          <p className="text-3xl font-bold mt-2 text-blue-800">{appointments.length}</p>
-          {appointments[0] && (
-            <p className="text-sm text-gray-500 mt-1">Next at <span className="font-medium">{appointments[0].time}</span></p>
-          )}
-        </div>
-        <div className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
-          <h3 className="text-lg font-semibold text-gray-700">⏳ Pending Approvals</h3>
-          <p className="text-3xl font-bold mt-2 text-yellow-600">{pendingAppointments.length}</p>
-        </div>
-        <div className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
-          <h3 className="text-lg font-semibold text-gray-700">👥 Active Patients</h3>
-          <p className="text-3xl font-bold mt-2 text-green-700">{activePatients.length}</p>
-        </div>
-        <div className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
-          <h3 className="text-lg font-semibold text-gray-700">💰 Billing Today</h3>
-          <p className="text-2xl mt-2 text-gray-700">
-            {billing ? `₹${billing.total}` : <span className="text-gray-400 italic">Coming Soon</span>}
-          </p>
-        </div>
+<div className="flex min-h-screen bg-gray-100">
+  <Sidebar />
+  <div className="flex-1 p-6 space-y-8">
+    
+    {/* Top Cards */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="p-6 bg-white rounded-xl shadow hover:shadow-lg transition">
+        <h3 className="text-lg font-semibold text-blue-800">🗓️ Today's Appointments</h3>
+        <p className="text-3xl font-bold mt-2 text-blue-700">{appointments.length}</p>
+        {appointments[0] && <p className="text-sm text-gray-500 mt-1">Next: <span className="font-medium">{appointments[0].time}</span></p>}
       </div>
 
-      {/* Graphs */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="p-6 bg-white rounded-xl shadow">
-          <h3 className="text-lg font-semibold mb-4 text-gray-700">📊 Appointments Status Overview</h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={appointmentsGraphData}>
-              <XAxis dataKey="name" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Bar dataKey="count" fill="#2D6CDF" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="p-6 bg-white rounded-xl shadow">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold text-gray-700">📦 Prescriptions Trend</h3>
-            <select
-              className="border rounded px-2 py-1 text-sm"
-              value={viewFilter}
-              onChange={e => setViewFilter(e.target.value)}
-            >
-              <option value="day">Last 7 Days</option>
-              <option value="month">Last 6 Months</option>
-              <option value="year">Last 5 Years</option>
-            </select>
-          </div>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={prescriptionsGraphData}>
-              <XAxis dataKey="day" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Bar dataKey="count" fill="#34D399" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+      <div className="p-6 bg-white rounded-xl shadow hover:shadow-lg transition">
+        <h3 className="text-lg font-semibold text-yellow-700">⏳ Pending Approvals</h3>
+        <p className="text-3xl font-bold mt-2 text-yellow-600">{pendingAppointments.length}</p>
       </div>
 
-      {/* Quick Tools */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <button
-          onClick={() => navigate('/doctor/prescriptions/create')}
-          className="p-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition transform hover:scale-105"
-        >
-          📝 Create Prescription
-        </button>
-        <button
-          onClick={() => navigate('/doctor/appointments')}
-          className="p-4 bg-green-500 text-white rounded-lg hover:bg-green-600 transition transform hover:scale-105"
-        >
-          📅 View Calendar
-        </button>
-        <button
-          onClick={() => navigate('/doctor/patients')}
-          className="p-4 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition transform hover:scale-105"
-        >
-          🧪 Check Lab Reports
-        </button>
+      <div className="p-6 bg-white rounded-xl shadow hover:shadow-lg transition">
+        <h3 className="text-lg font-semibold text-green-700">👥 Active Patients</h3>
+        <p className="text-3xl font-bold mt-2 text-green-600">{activePatients.length}</p>
+      </div>
+
+      <div className="p-6 bg-white rounded-xl shadow hover:shadow-lg transition">
+        <h3 className="text-lg font-semibold text-gray-700">💰 Billing Today</h3>
+        <p className="text-2xl mt-2 text-gray-700">{billing ? `₹${billing.total}` : <span className="text-gray-400 italic">Coming Soon</span>}</p>
       </div>
     </div>
+
+    {/* Graphs */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="p-6 bg-white rounded-xl shadow">
+        <h3 className="text-lg font-semibold mb-4 text-gray-700">📊 Appointments Overview</h3>
+        <ResponsiveContainer width="100%" height={250}>
+          <BarChart data={appointmentsGraphData}>
+            <XAxis dataKey="name" />
+            <YAxis allowDecimals={false} />
+            <Tooltip />
+            <Bar dataKey="count" fill="#2D6CDF" radius={[4,4,0,0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="p-6 bg-white rounded-xl shadow">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold text-gray-700">📦 Prescriptions Trend</h3>
+          <select
+            className="border rounded px-2 py-1 text-sm"
+            value={viewFilter}
+            onChange={e => setViewFilter(e.target.value)}
+          >
+            <option value="day">Last 7 Days</option>
+            <option value="month">Last 6 Months</option>
+            <option value="year">Last 5 Years</option>
+          </select>
+        </div>
+        <ResponsiveContainer width="100%" height={250}>
+          <BarChart data={prescriptionsGraphData}>
+            <XAxis dataKey="day" />
+            <YAxis allowDecimals={false} />
+            <Tooltip />
+            <Bar dataKey="count" fill="#34D399" radius={[4,4,0,0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+
+    {/* Quick Tools */}
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <button
+        onClick={() => navigate('/doctor/prescriptions/create')}
+        className="p-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition transform hover:scale-105"
+      >
+        📝 Create Prescription
+      </button>
+      <button
+        onClick={() => navigate('/doctor/appointments')}
+        className="p-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition transform hover:scale-105"
+      >
+        📅 View Calendar
+      </button>
+      <button
+        onClick={() => navigate('/doctor/patients')}
+        className="p-4 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition transform hover:scale-105"
+      >
+        🧪 Lab Reports
+      </button>
+    </div>
+
   </div>
+</div>
+
 );}
 export default DoctorDashboard;

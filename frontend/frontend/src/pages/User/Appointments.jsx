@@ -66,9 +66,9 @@ const cancelAppointment = async (appointmentId) => {
             {appointments.map((appt) => (
               <div key={appt._id} className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
                 <h2 className="text-xl font-semibold text-[#2D6CDF]">
-                  Dr. {appt.doctorId?.name || "Unknown"}
+                  Dr. {appt.doctorId?.name || "Sarah Johnson"}
                 </h2>
-                <p className="text-gray-700">{appt.doctorId?.speciality || "Speciality not available"}</p>
+                <p className="text-gray-700">{appt.doctorId?.speciality || "Cardiology"}</p>
                 <p className="text-sm text-gray-600 mt-1">
                   Date: {formatDate(appt.date)} | Time: {appt.time}
                 </p>

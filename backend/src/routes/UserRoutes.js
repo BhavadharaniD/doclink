@@ -8,6 +8,7 @@ const router = express.Router();
 router.get('/doctor/:id/active', protect, authorizeRoles('Doctor'),getActivePatients);
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+router.get('/doctor/:id/active', protect, authorizeRoles('Doctor'),getActivePatients);
 router.put('/update/:id', protect, updateUser);
 router.delete('/delete/:id', protect, deleteUser);
 router.post('/reset-password', resetPassword);

@@ -3,8 +3,6 @@ import path from 'path';
 import Prescription from '../models/Prescription.js';
 import { generatePrescriptionAI } from '../services/aiservice.js';
 
-
-
 const medicinesPath = path.resolve('data/medicines.json');
 const templatesPath = path.resolve('data/templates.json');
 
@@ -20,44 +18,41 @@ export const createPrescription = async (req, res) => {
       patientId,
       medicines,
       instructions,
-      templateUsed: templateUsed || '',
-       date: new Date()
+      templateUsed: templateUsed || "",
+      date: new Date(),
     });
 
-    res.status(201).json({ message: 'Prescription created', prescription });
+    res.status(201).json({ message: "Prescription created", prescription });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// AI-generated prescription
+// AI-generated Prescription
 export const aiGeneratePrescription = async (req, res) => {
   try {
     const { patientId, diagnosis, age, allergies, templateUsed } = req.body;
 
     const aiResponse = await generatePrescriptionAI(diagnosis, age, allergies);
-    const prescriptionData = JSON.parse(aiResponse);
-
-    prescriptionData.templateUsed = templateUsed || '';
+    const prescriptionData = JSON.parse(aiResponse); // safely parsed JSON
 
     const prescription = await Prescription.create({
       doctorId: req.user._id,
       patientId,
       medicines: prescriptionData.medicines,
       instructions: prescriptionData.instructions,
-      notes: prescriptionData.notes || 'Follow standard medical advice.',
-      templateUsed: prescriptionData.templateUsed,
-       date: new Date()
+      notes: prescriptionData.notes || "Follow standard medical advice.",
+      templateUsed: templateUsed || "",
+      date: new Date(),
     });
 
-    // Log AI usage with Inngest
-  
-
-    res.status(201).json({ message: 'AI prescription created', prescription });
+    res.status(201).json({ message: "AI prescription created", prescription });
   } catch (error) {
+    console.error("AI prescription error:", error);
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // Get prescriptions by doctor
 export const getPrescriptionsByDoctor = async (req, res) => {

@@ -7,7 +7,7 @@ const labResultSchema = mongoose.Schema(
     doctorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor', required: false }, // optional if patient uploads
     fileName: { type: String, required: true },
     filePath: { type: String, required: true },
-    remarks: { type: String, default: '' },
+      remarks: { type: mongoose.Schema.Types.Mixed, default: {} }, 
     uploadedAt: { type: Date, default: Date.now },
   },
   { timestamps: true }

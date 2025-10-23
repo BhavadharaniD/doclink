@@ -1,4 +1,3 @@
-// src/components/Sidebar.jsx
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { HomeIcon, CalendarIcon, UserGroupIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
@@ -12,9 +11,13 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-64 h-screen bg-white shadow-md flex flex-col">
-      <div className="p-6 font-bold text-xl border-b">Doctor Panel</div>
+    <div className="w-64 h-screen shadow-lg flex flex-col bg-blue-600 text-white">
+      {/* Logo */}
+      <div className="p-6 font-bold text-2xl border-b border-blue-700 flex items-center justify-center">
+        DocLink
+      </div>
 
+      {/* Menu */}
       <nav className="flex-1 mt-4">
         {menuItems.map((item, idx) => {
           const Icon = item.icon;
@@ -23,17 +26,32 @@ const Sidebar = () => {
               key={idx}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center p-4 text-gray-700 hover:bg-gray-100 ${
-                  isActive ? 'bg-blue-100 text-blue-700 font-semibold' : ''
+                `flex items-center p-4 mx-3 mb-2 rounded-lg transition-all duration-200 ${
+                  isActive
+                    ? 'bg-[7002D6CDF] text-white shadow-md'
+                    : 'text-gray-200 hover:bg-[7002D6CDF] hover:text-white'
                 }`
               }
             >
-              <Icon className="w-5 h-5 mr-3" />
-              <span>{item.name}</span>
+              {({ isActive }) => (
+                <>
+                  <Icon
+                    className={`w-5 h-5 mr-3 transition-colors ${
+                      isActive ? 'text-white' : 'text-gray-300'
+                    }`}
+                  />
+                  <span className="text-sm font-medium">{item.name}</span>
+                </>
+              )}
             </NavLink>
           );
         })}
       </nav>
+
+      {/* Footer or extra space */}
+      <div className="p-4 border-t border-blue-700 text-gray-300 text-sm">
+        &copy; 2025 DocLink
+      </div>
     </div>
   );
 };
