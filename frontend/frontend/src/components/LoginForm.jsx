@@ -23,9 +23,14 @@ const LoginForm = ({ role = "user" }) => {
 
       // ✅ Store in localStorage
       localStorage.setItem('doclinkToken', data.token);
-      localStorage.setItem('userId', data._id);
-      localStorage.setItem('userName', data.name);
-      localStorage.setItem('role', role);
+localStorage.setItem('userName', data.name);
+localStorage.setItem('role', role);
+
+if (role === 'doctor') {
+  localStorage.setItem('doctorId', data._id); // important!
+} else {
+  localStorage.setItem('userId', data._id);
+}
 
       // ✅ Store in Context
       setUser({

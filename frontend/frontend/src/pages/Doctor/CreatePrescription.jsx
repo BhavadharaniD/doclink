@@ -9,7 +9,6 @@ const CreatePrescription = () => {
   const [instructions, setInstructions] = useState("");
   const [loadingAI, setLoadingAI] = useState(false);
 
-  // Simulated patient data (replace with actual props/context)
   const patient = {
     id: "abc123",
     name: "Sanjeevi",
@@ -19,15 +18,21 @@ const CreatePrescription = () => {
 
   useEffect(() => {
     const fetchTemplates = async () => {
-      const token = localStorage.getItem("token");
-      const res = await fetch("/api/prescriptions/templates", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (res.ok) setAvailableTemplates(data.templates);
+      try {
+        const token = localStorage.getItem("doclinkToken");
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/prescriptions/template?condition=${template}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setAvailableTemplates([data]); // backend returns a single template object
+        }
+      } catch (err) {
+        console.error(err);
+      }
     };
-    fetchTemplates();
-  }, []);
+    if (template) fetchTemplates();
+  }, [template]);
 
   const handleChange = (index, field, value) => {
     const updated = [...medications];
@@ -38,15 +43,15 @@ const CreatePrescription = () => {
   const handleAIGenerate = async () => {
     try {
       setLoadingAI(true);
-      const token = localStorage.getItem("token");
-
-      const res = await fetch("/api/prescriptions/ai/generate", {
+      const token = localStorage.getItem("doclinkToken");
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/prescriptions/ai/generate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
+          patientId: patient.id,
           diagnosis: template,
           age: patient.age,
           allergies: patient.allergies,
@@ -55,8 +60,8 @@ const CreatePrescription = () => {
 
       const data = await res.json();
       if (res.ok) {
-        setMedications(data.data.medicines || []);
-        setInstructions(data.data.instructions || "");
+        setMedications(data.prescription.medicines || []);
+        setInstructions(data.prescription.instructions || "");
       } else {
         alert(data.message);
       }
@@ -69,17 +74,15 @@ const CreatePrescription = () => {
   };
 
   const handleSave = async () => {
-    const isValid = medications.every(
-      (med) => med.name && med.dosage && med.frequency
-    );
+    const isValid = medications.every((med) => med.name && med.dosage && med.frequency);
     if (!isValid) {
       alert("Please fill all medication fields.");
       return;
     }
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("/api/prescriptions/create", {
+      const token = localStorage.getItem("doclinkToken");
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/prescriptions/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -113,7 +116,6 @@ const CreatePrescription = () => {
   return (
     <div className="flex">
       <Sidebar />
-
       <div className="min-h-screen bg-gray-100 p-6 w-full">
         <div className="max-w-4xl mx-auto bg-white rounded-xl shadow p-6 space-y-6">
           <h1 className="text-2xl font-bold text-blue-700">Create Prescription</h1>
@@ -121,7 +123,6 @@ const CreatePrescription = () => {
             Patient: <span className="font-semibold">{patient.name}</span>
           </p>
 
-          {/* Diagnosis Input */}
           <div>
             <label className="block text-gray-700 font-medium mb-2">Diagnosis</label>
             <input
@@ -133,7 +134,6 @@ const CreatePrescription = () => {
             />
           </div>
 
-          {/* Mode Toggle */}
           <div className="mb-4 flex gap-4">
             <button
               onClick={() => setMode("manual")}
@@ -149,7 +149,6 @@ const CreatePrescription = () => {
             </button>
           </div>
 
-          {/* AI Mode Button */}
           {mode === "ai" && (
             <button
               onClick={handleAIGenerate}
@@ -160,22 +159,20 @@ const CreatePrescription = () => {
             </button>
           )}
 
-          {/* Medication Cards */}
           <div className="space-y-6">
             {medications.map((med, idx) => (
               <div key={idx} className="bg-gray-50 p-5 rounded-lg border shadow-sm">
                 <h2 className="text-lg font-semibold text-blue-600 mb-3">{med.name}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <inputField label="Dosage" value={med.dosage} onChange={(val) => handleChange(idx, "dosage", val)} />
-                  <inputField label="Frequency" value={med.frequency} onChange={(val) => handleChange(idx, "frequency", val)} />
-                  <inputField label="Duration" value={med.duration} onChange={(val) => handleChange(idx, "duration", val)} />
-                  <inputField label="Special Instructions" value={med.instructions} onChange={(val) => handleChange(idx, "instructions", val)} />
+                  <InputField label="Dosage" value={med.dosage} onChange={(val) => handleChange(idx, "dosage", val)} />
+                  <InputField label="Frequency" value={med.frequency} onChange={(val) => handleChange(idx, "frequency", val)} />
+                  <InputField label="Duration" value={med.duration} onChange={(val) => handleChange(idx, "duration", val)} />
+                  <InputField label="Special Instructions" value={med.instructions} onChange={(val) => handleChange(idx, "instructions", val)} />
                 </div>
               </div>
             ))}
           </div>
 
-          {/* General Instructions */}
           <div>
             <label className="block text-gray-700 font-medium mb-1">General Instructions</label>
             <textarea
@@ -185,18 +182,11 @@ const CreatePrescription = () => {
             />
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-4">
-            <button
-              onClick={handleSave}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition"
-            >
+            <button onClick={handleSave} className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition">
               Save Prescription
             </button>
-            <button
-              onClick={handleSend}
-              className="bg-green-600 text-white px-6 py-2 rounded-lg shadow hover:bg-green-700 transition"
-            >
+            <button onClick={handleSend} className="bg-green-600 text-white px-6 py-2 rounded-lg shadow hover:bg-green-700 transition">
               Send to Patient
             </button>
           </div>
@@ -206,13 +196,12 @@ const CreatePrescription = () => {
   );
 };
 
-// Reusable input field component
-const inputField = ({ label, value, onChange }) => (
+const InputField = ({ label, value, onChange }) => (
   <div>
     <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
     <input
       type="text"
-      value={value}
+      value={value || ""}
       onChange={(e) => onChange(e.target.value)}
       className="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:outline-none"
     />

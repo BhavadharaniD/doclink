@@ -3,6 +3,7 @@ import axios from "axios";
 import Sidebar from "../../components/Sidebar";
 import { toast } from "react-toastify";
 import BookAppointment from "../../components/BookAppointment"; // make sure the path is correct
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const Appointments = () => {
@@ -28,19 +29,18 @@ const Appointments = () => {
   }, [userId, token]);
 
   // Cancel appointment
-const cancelAppointment = async (appointmentId) => {
-  try {
-    await axios.delete(`${API_BASE}/api/appointment/${appointmentId}/cancel`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    toast.success("Appointment canceled successfully!");
-    // remove canceled appointment from state immediately
-    setAppointments(prev => prev.filter(appt => appt._id !== appointmentId));
-  } catch (err) {
-    console.error("Cancel error:", err.response?.data || err.message);
-    toast.error("Failed to cancel appointment");
-  }
-};
+  const cancelAppointment = async (appointmentId) => {
+    try {
+      await axios.put(`${API_BASE}/api/appointment/cancel/${appointmentId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success("Appointment canceled successfully!");
+      setAppointments(prev => prev.filter(appt => appt._id !== appointmentId));
+    } catch (err) {
+      console.error("Cancel error:", err.response?.data || err.message);
+      toast.error("Failed to cancel appointment");
+    }
+  };
 
   const formatDate = (isoDate) => {
     return new Date(isoDate).toLocaleDateString("en-IN", {
@@ -56,7 +56,6 @@ const cancelAppointment = async (appointmentId) => {
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-[#2D6CDF]">My Appointments</h1>
-          {/* Button to book new appointment can open a BookAppointment modal */}
         </div>
 
         {appointments.length === 0 ? (
@@ -66,27 +65,31 @@ const cancelAppointment = async (appointmentId) => {
             {appointments.map((appt) => (
               <div key={appt._id} className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
                 <h2 className="text-xl font-semibold text-[#2D6CDF]">
-                  Dr. {appt.doctorId?.name || "Sarah Johnson"}
+                  Dr. {appt.doctorId?.name || "N/A"}
                 </h2>
-                <p className="text-gray-700">{appt.doctorId?.speciality || "Cardiology"}</p>
+                <p className="text-gray-700">{appt.doctorId?.speciality || "N/A"}</p>
                 <p className="text-sm text-gray-600 mt-1">
                   Date: {formatDate(appt.date)} | Time: {appt.time}
                 </p>
                 <p className="text-sm text-green-600 mt-1">Status: {appt.status}</p>
 
                 <div className="mt-4 flex gap-4">
-                  <button
-                    onClick={() => setRescheduleAppt(appt)}
-                    className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-                  >
-                    Reschedule
-                  </button>
-                  <button
-                    onClick={() => cancelAppointment(appt._id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                  >
-                    Cancel
-                  </button>
+                  {appt.status === "pending" && (
+                    <button
+                      onClick={() => setRescheduleAppt(appt)}
+                      className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+                    >
+                      Reschedule
+                    </button>
+                  )}
+                  {appt.status !== "completed" && appt.status !== "canceled" && (
+                    <button
+                      onClick={() => cancelAppointment(appt._id)}
+                      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                    >
+                      Cancel
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

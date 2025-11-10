@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Sidebar from "../../components/Doctor/Sidebar";
 
-const DoctorDashboard = () => {
+const PatientPage = () => {
   const [searchText, setSearchText] = useState("");
   const [patients, setPatients] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
@@ -9,14 +10,30 @@ const DoctorDashboard = () => {
   const [prescriptions, setPrescriptions] = useState([]);
   const [labResults, setLabResults] = useState([]);
 
-  // Dummy patient data
+  const backendURL = "http://localhost:5000"; // Your backend URL
+  const doctorId = localStorage.getItem('doctorId');
+  const token = localStorage.getItem('doclinkToken');
+  // Fetch active patients
   useEffect(() => {
-    const dummyPatients = [
-      { _id: "1", name: "Sanjeevi", age: 40, condition: "Hypertension", lastVisit: "2025-10-10", status: "Active" },
-      { _id: "2", name: "Bhavadarshan", age: 28, condition: "Diabetes", lastVisit: "2025-09-22", status: "Active" },
-    ];
-    setPatients(dummyPatients);
-  }, []);
+    if (!doctorId) {
+      console.error("Doctor ID is missing!");
+      return;
+    }
+
+    const fetchPatients = async () => {
+      try {
+       const res = await axios.get(
+  `${import.meta.env.VITE_API_BASE_URL}/api/users/doctor/${doctorId}/active`,
+  { headers: { Authorization: `Bearer ${token}` } 
+        });
+        setPatients(res.data);
+      } catch (err) {
+        console.error("Error fetching patients:", err);
+      }
+    };
+
+    fetchPatients();
+  }, [backendURL, doctorId, token]);
 
   // Filter patients based on search
   useEffect(() => {
@@ -28,39 +45,30 @@ const DoctorDashboard = () => {
     setFilteredPatients(filtered);
   }, [searchText, patients]);
 
-  // Dummy prescriptions and lab results
+  // Fetch prescriptions and lab results for selected patient
   useEffect(() => {
     if (!selectedPatient) return;
 
-    const dummyPrescriptions = [
-      {
-        _id: "rx1",
-        instructions: "Take one tablet daily after breakfast",
-        notes: "Monitor blood pressure weekly",
-        medicines: [{ name: "Lisinopril 10mg" }],
-      },
-    ];
+    const fetchDetails = async () => {
+      try {
+        const [rxRes, labRes] = await Promise.all([
+          axios.get(`${backendURL}/prescriptions/patient/${selectedPatient._id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get(`${backendURL}/labresults/patient/${selectedPatient._id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
 
-    const dummyLabResults = [
-      {
-        _id: "lab1",
-        fileName: "CBC_Report.pdf",
-        filePath: "#",
-        remarks: "Normal range",
-        uploadedAt: "2025-10-10",
-      },
-      {
-        _id: "lab2",
-        fileName: "Lipid_Profile.pdf",
-        filePath: "#",
-        remarks: "Elevated LDL",
-        uploadedAt: "2025-09-30",
-      },
-    ];
+        setPrescriptions(rxRes.data);
+        setLabResults(labRes.data);
+      } catch (err) {
+        console.error("Error fetching patient details:", err);
+      }
+    };
 
-    setPrescriptions(dummyPrescriptions);
-    setLabResults(dummyLabResults);
-  }, [selectedPatient]);
+    fetchDetails();
+  }, [selectedPatient, backendURL, token]);
 
   return (
     <div className="flex">
@@ -107,7 +115,9 @@ const DoctorDashboard = () => {
                 <div>
                   <h2 className="text-2xl font-bold text-gray-800">{selectedPatient.name}</h2>
                   <p className="text-gray-600">Age: {selectedPatient.age || "-"}</p>
-                  <p className="text-gray-600">Last Visit: {new Date(selectedPatient.lastVisit).toLocaleDateString()}</p>
+                  <p className="text-gray-600">
+                    Last Visit: {selectedPatient.lastVisit ? new Date(selectedPatient.lastVisit).toLocaleDateString() : "-"}
+                  </p>
                 </div>
               </div>
 
@@ -146,7 +156,7 @@ const DoctorDashboard = () => {
                         </a>
                       </p>
                       <p><span className="font-semibold text-gray-700">Remarks:</span> {lab.remarks}</p>
-                      <p><span className="font-semibold text-gray-700">Uploaded At:</span> {new Date(lab.uploadedAt).toLocaleDateString()}</p>
+                      <p><span className="font-semibold text-gray-700">Uploaded At:</span> {lab.uploadedAt ? new Date(lab.uploadedAt).toLocaleDateString() : "-"}</p>
                     </div>
                   ))
                 ) : (
@@ -166,4 +176,4 @@ const DoctorDashboard = () => {
   );
 };
 
-export default DoctorDashboard;
+export default PatientPage;

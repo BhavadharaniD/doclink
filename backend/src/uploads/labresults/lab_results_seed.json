@@ -1,0 +1,28 @@
+[
+  {
+    "patientName": "Arun Kumar",
+    "patientDOB": "1990-05-12",
+    "fileName": "lab1_arun.pdf",
+    "uploadedAt": "2025-09-14T10:30:00Z",
+    "remarks": {
+      "pH": "7.5",
+      "Protein": "Negative",
+      "Glucose": "Negative"
+    },
+    "testGroups": ["Blood Test", "Urine Test"],
+    "referringDoctor": "Dr. R. Sivasubramanian"
+  },
+  {
+    "patientName": "Sowmya R",
+    "patientDOB": "1992-08-23",
+    "fileName": "lab2_sowmya.pdf",
+    "uploadedAt": "2025-09-15T11:00:00Z",
+    "remarks": {
+      "pH": "7.2",
+      "Protein": "Negative",
+      "Glucose": "Negative"
+    },
+    "testGroups": ["Blood Test"],
+    "referringDoctor": "Dr. G. Nithya"
+  }
+]

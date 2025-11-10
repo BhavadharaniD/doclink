@@ -1,5 +1,5 @@
 // src/controllers/labResultController.js
-import LabResult from '../models/Labresult.js';
+import LabResult from '../models/LabResult.js';
 import path from 'path';
 import fs from 'fs';
 
